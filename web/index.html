@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHRONO // Tactical Task Director</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+    <!-- Subtle tactile noise & vignette overlays -->
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="vignette-overlay" aria-hidden="true"></div>
+    <div class="radial-ambient" aria-hidden="true"></div>
+
+    <div class="deck-frame">
+        <!-- Top Navigation / Telemetry Bar -->
+        <header class="masthead">
+            <div class="masthead-brand">
+                <div class="monogram-badge">
+                    <span class="mono-symbol">⬡</span>
+                    <span class="pulse-optic"></span>
+                </div>
+                <div class="title-group">
+                    <div class="system-tag">ENGINE PROTOCOL // C++20·POSIX</div>
+                    <h1 class="brand-name">KRONOS<span class="brand-mark">.CORE</span></h1>
+                </div>
+            </div>
+
+            <!-- Telemetry HUD -->
+            <div class="telemetry-bar">
+                <div class="telemetry-cell">
+                    <span class="tel-label">INDEX</span>
+                    <span class="tel-data" id="stat-total">00</span>
+                </div>
+                <div class="telemetry-divider">/</div>
+                <div class="telemetry-cell">
+                    <span class="tel-label">ACTIVE</span>
+                    <span class="tel-data tel-amber" id="stat-pending">00</span>
+                </div>
+                <div class="telemetry-divider">/</div>
+                <div class="telemetry-cell">
+                    <span class="tel-label">RESOLVED</span>
+                    <span class="tel-data tel-emerald" id="stat-done">00</span>
+                </div>
+                <div class="telemetry-cell uptime-cell">
+                    <span class="tel-label">STORAGE BUS</span>
+                    <span class="tel-data tel-cyan" id="sync-indicator">tasks.json [OK]</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Studio Deck -->
+        <main class="workbench">
+            <!-- Command Dispatch Bar (New Task) -->
+            <section class="command-console">
+                <form id="add-task-form" class="console-form">
+                    <div class="terminal-prefix">
+                        <span class="prompt-char">›</span>
+                        <span class="prompt-context">EXECUTE</span>
+                    </div>
+
+                    <div class="command-input-slot">
+                        <input 
+                            type="text" 
+                            id="task-title-input" 
+                            placeholder="Enter task directive or operation code..." 
+                            required 
+                            autocomplete="off"
+                            spellcheck="false"
+                        >
+                        <div class="input-focus-bracket"></div>
+                    </div>
+
+                    <!-- Priority Spectrum Selector -->
+                    <div class="priority-strip" role="radiogroup" aria-label="Priority tier">
+                        <label class="prio-tag prio-low">
+                            <input type="radio" name="priority" value="low">
+                            <span class="prio-indicator"></span>
+                            <span class="prio-text">PRIO III · LOW</span>
+                        </label>
+                        <label class="prio-tag prio-med active">
+                            <input type="radio" name="priority" value="med" checked>
+                            <span class="prio-indicator"></span>
+                            <span class="prio-text">PRIO II · MED</span>
+                        </label>
+                        <label class="prio-tag prio-high">
+                            <input type="radio" name="priority" value="high">
+                            <span class="prio-indicator"></span>
+                            <span class="prio-text">PRIO I · HIGH</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" id="add-task-btn" class="action-btn">
+                        <span class="btn-grid-decor"></span>
+                        <span class="btn-label">COMMIT DIRECTIVE</span>
+                        <span class="btn-key">↵</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Workspace Matrix Filter & Ledger Header -->
+            <section class="ledger-section">
+                <div class="ledger-header">
+                    <div class="scope-switchers">
+                        <button class="scope-btn active" data-filter="all">
+                            <span class="scope-glyph">◈</span>
+                            <span>ALL DIRECTIVES</span>
+                            <span class="scope-count" id="count-all">0</span>
+                        </button>
+                        <button class="scope-btn" data-filter="pending">
+                            <span class="scope-glyph">◷</span>
+                            <span>PENDING</span>
+                            <span class="scope-count" id="count-pending">0</span>
+                        </button>
+                        <button class="scope-btn" data-filter="done">
+                            <span class="scope-glyph">✓</span>
+                            <span>RESOLVED</span>
+                            <span class="scope-count" id="count-done">0</span>
+                        </button>
+                    </div>
+
+                    <div class="ledger-meta">
+                        <span class="mono-meta">SORT: CHRONOLOGICAL</span>
+                        <span class="mono-meta sep">|</span>
+                        <span class="mono-meta">ARCH: C++20 STATIC LIB</span>
+                    </div>
+                </div>
+
+                <!-- Ledger Grid / Task Stream -->
+                <div class="ledger-stream" id="tasks-list-container">
+                    <!-- Cards injected via app.js -->
+                </div>
+
+                <!-- Empty Blueprint Canvas -->
+                <div id="empty-state" class="empty-diorama hidden">
+                    <div class="reticle-target">
+                        <span class="reticle-line h"></span>
+                        <span class="reticle-line v"></span>
+                        <span class="reticle-center"></span>
+                    </div>
+                    <div class="empty-title">QUEUE QUIESCENT</div>
+                    <p class="empty-sub">No pending directives logged in the persistent registry buffer.</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Industrial Metadata Ribbon -->
+        <footer class="colophon">
+            <div class="colophon-left">
+                <span class="sys-dot"></span>
+                <span>DATA PERSISTENCE: <code>~/.todo/tasks.json</code></span>
+            </div>
+            <div class="colophon-right">
+                <span>INTEROP: <code>todo add|list|done|remove</code></span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

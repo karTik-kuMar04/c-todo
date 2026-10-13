@@ -1,0 +1,20 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+Standard: c++20
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Attach
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"todo/'
+    Priority: 1
+  - Regex: '^<(CLI|nlohmann|gtest)/'
+    Priority: 2
+  - Regex: '^<[a-z_]+>'
+    Priority: 3
+SortIncludes: CaseSensitive
+...

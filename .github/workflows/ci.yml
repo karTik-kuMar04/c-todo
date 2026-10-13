@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (${{ matrix.compiler.name }})
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          - name: GCC 13
+            cc: gcc-13
+            cxx: g++-13
+            install: sudo apt-get update && sudo apt-get install -y gcc-13 g++-13
+          - name: Clang 16
+            cc: clang-16
+            cxx: clang++-16
+            install: sudo apt-get update && sudo apt-get install -y clang-16
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install compiler and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build git
+          ${{ matrix.compiler.install }}
+
+      - name: Configure CMake
+        env:
+          CC: ${{ matrix.compiler.cc }}
+          CXX: ${{ matrix.compiler.cxx }}
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_TESTING=ON
+
+      - name: Build targets
+        run: cmake --build build --parallel
+
+      - name: Run unit tests via CTest
+        run: |
+          cd build
+          ctest --output-on-failure --parallel 2
